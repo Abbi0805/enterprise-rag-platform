@@ -511,11 +511,18 @@ volumes:
 
 ### Azure Deployment (Production)
 
-1. **Provision Infrastructure**:
+This project uses **Infrastructure as Code (IaC)** for automated cloud provisioning. See [`infra/`](infra/) for details.
+
+1. **Option A: Terraform** (Recommended for multi-cloud):
    ```bash
    cd infra/terraform
-   terraform init
-   terraform apply
+   terraform init && terraform apply
+   ```
+
+2. **Option B: Azure Bicep** (Native Azure):
+   ```bash
+   cd infra/azure
+   az deployment sub create --template-file main.bicep
    ```
 
 2. **Deploy via GitHub Actions**:
