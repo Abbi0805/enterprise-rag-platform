@@ -6,6 +6,8 @@
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.109+-green.svg)](https://fastapi.tiangolo.com/)
 [![Qdrant](https://img.shields.io/badge/Qdrant-1.7+-purple.svg)](https://qdrant.tech/)
 [![Azure OpenAI](https://img.shields.io/badge/Azure%20OpenAI-Integrated-orange.svg)](https://azure.microsoft.com/en-us/products/ai-services/openai-service)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![Code style: ruff](https://img.shields.io/badge/code%20style-ruff-000000.svg)](https://github.com/astral-sh/ruff)
 
 ## 🎯 Project Overview
 
@@ -14,79 +16,98 @@ This platform demonstrates **enterprise-grade AI engineering practices** for bui
 - **Production Readiness**: Authentication, cost tracking, semantic caching, error handling
 - **Security**: Permission-aware retrieval with RBAC/ABAC simulation  
 - **Observability**: Query-level cost metrics, provenance tracking, evaluation pipelines
-- **MLOps Integration**: Azure ML pipelines, GitHub Actions CI/CD, Infrastructure-as-Code
+- **MLOps Integration**: Azure ML pipelines, GitHub Actions CI/CD, experiment tracking
 
 **Target Audience**: Senior AI Engineers, ML Platform Architects, Technical Leads evaluating production RAG implementations.
+
+---
+
+## 📑 Table of Contents
+
+- [Architecture](#️-architecture)
+- [Key Features](#-key-features)
+- [Technology Stack](#️-technology-stack)
+- [Project Structure](#-project-structure)
+- [Quick Start](#-quick-start)
+- [API Endpoints](#-api-endpoints)
+- [Testing & Evaluation](#-testing--evaluation)
+- [MLOps & Experimentation](#-mlops--experimentation)
+- [Security Considerations](#-security-considerations)
+- [Deployment](#-deployment)
+- [Performance Benchmarks](#-performance-benchmarks)
+- [Contributing](#-contributing)
+- [License](#-license)
+- [Author](#-author)
 
 ---
 
 ## 🏗️ Architecture
 
 ```mermaid
-graph LR
-    %% Styling
-    classDef client fill:#e1f5ff,stroke:#01579b,stroke-width:2px
-    classDef api fill:#fff3e0,stroke:#e65100,stroke-width:2px
-    classDef orchestration fill:#f3e5f5,stroke:#4a148c,stroke-width:2px
-    classDef retrieval fill:#e8f5e9,stroke:#1b5e20,stroke-width:2px
-    classDef data fill:#fce4ec,stroke:#880e4f,stroke-width:2px
-    classDef ingestion fill:#fff9c4,stroke:#f57f17,stroke-width:2px
+flowchart LR
+    subgraph clients["Client Layer"]
+        UI[OpenWebUI / Clients]
+    end
     
-    %% Client Layer
-    A[🌐 OpenWebUI<br/>API Clients]:::client
+    subgraph api["API Layer"]
+        Server[FastAPI Server]
+        OpenAI["/v1/chat/completions"]
+        Auth[Auth Middleware]
+    end
     
-    %% API Layer
-    B[⚡ FastAPI Server]:::api
-    C[🔌 OpenAI Endpoint<br/>/v1/chat/completions]:::api
-    D[🔐 Auth Middleware<br/>Bearer Tokens]:::api
+    subgraph orchestration["Orchestration"]
+        Orch[RAG Orchestrator]
+        Cache[Semantic Cache]
+        Cost[Cost Tracker]
+        Router[Model Router]
+    end
     
-    %% Orchestration Layer
-    E[🎯 RAG Orchestrator<br/>Query Handler]:::orchestration
-    F[💾 Semantic Cache<br/>Cosine Similarity]:::orchestration
-    G[💰 Cost Tracker<br/>Token Pricing]:::orchestration
-    H[🔀 Model Router<br/>GPT-4o / Mini]:::orchestration
+    subgraph retrieval["Retrieval"]
+        Hybrid[Hybrid Retriever]
+        Vector[Vector Search]
+        Rerank[Cross-Encoder]
+        Permissions[RBAC Filter]
+    end
     
-    %% Retrieval Layer
-    I[🔍 Hybrid Retriever<br/>Vector + Keyword]:::retrieval
-    J[📊 Vector Search<br/>Similarity Search]:::retrieval
-    K[⭐ Reranker<br/>Cross-Encoder]:::retrieval
-    L[🛡️ Permission Filter<br/>RBAC]:::retrieval
+    subgraph data["Data & Services"]
+        DB[(Qdrant DB)]
+        Embed[Azure OpenAI<br/>Embeddings]
+        LLM[Azure OpenAI<br/>Chat]
+    end
     
-    %% Data Layer
-    M[(🗄️ Qdrant<br/>Vector DB)]:::data
-    N[🤖 Azure OpenAI<br/>Embeddings API]:::data
-    O[💬 Azure OpenAI<br/>Chat API]:::data
+    subgraph ingestion["Ingestion Pipeline"]
+        Loaders[Document Loaders]
+        Chunker[Chunking]
+        EmbedGen[Embedding Gen]
+    end
     
-    %% Ingestion Pipeline
-    P[📄 Document Loaders<br/>PDF/MD/GitHub]:::ingestion
-    Q[✂️ Chunker<br/>Token-based]:::ingestion
-    R[🔢 Embedding Gen<br/>text-embedding-3]:::ingestion
+    UI -->|HTTP| Server
+    Server --> OpenAI
+    Server --> Auth
+    Auth -.->|validate| OpenAI
+    OpenAI --> Orch
+    Orch --> Cache
+    Orch --> Cost
+    Orch --> Router
+    Orch --> Hybrid
+    Hybrid --> Vector
+    Vector --> DB
+    Hybrid --> Rerank
+    Hybrid --> Permissions
+    Orch --> LLM
     
-    %% Query Flow
-    A -->|"1. HTTP Request"| B
-    B -->|"2. Route"| C
-    B -->|"2. Authenticate"| D
-    D -->|"3. Validated User"| C
-    C -->|"4. Query"| E
-    E -->|"5. Check Cache"| F
-    E -->|"6. Track Cost"| G
-    E -->|"7. Select Model"| H
-    E -->|"8. Retrieve Context"| I
-    I -->|"9. Vector Search"| J
-    J -->|"10. Query DB"| M
-    I -->|"11. Rerank"| K
-    I -->|"12. Filter Access"| L
-    L -->|"13. Filtered Results"| E
-    E -->|"14. Generate Answer"| O
-    O -->|"15. Response"| C
-    C -->|"16. JSON"| A
+    Loaders -.-> Chunker
+    Chunker -.-> EmbedGen
+    EmbedGen -.-> Embed
+    Embed -.-> EmbedGen
+    EmbedGen -.-> DB
     
-    %% Ingestion Flow
-    P -.->|"Load Documents"| Q
-    Q -.->|"Create Chunks"| R
-    R -.->|"Generate Vectors"| N
-    N -.->|"Embeddings"| R
-    R -.->|"Upsert"| M
+    style clients fill:#e3f2fd,stroke:#1976d2,stroke-width:2px
+    style api fill:#fff3e0,stroke:#f57c00,stroke-width:2px
+    style orchestration fill:#f3e5f5,stroke:#7b1fa2,stroke-width:2px
+    style retrieval fill:#e8f5e9,stroke:#388e3c,stroke-width:2px
+    style data fill:#fce4ec,stroke:#c2185b,stroke-width:2px
+    style ingestion fill:#fff9c4,stroke:#f9a825,stroke-width:2px
 ```
 
 ### Component Breakdown
