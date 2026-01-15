@@ -1,0 +1,22 @@
+{
+  "questions": [
+    "What experience does this person have with RAG systems?",
+    "Which cloud platforms has this candidate worked with?",
+    "What MLOps tools does this person know?",
+    "What programming languages is this person proficient in?"
+  ],
+  "ground_truths": [
+    [
+      "The person has extensive experience building enterprise RAG platforms with hybrid retrieval, semantic caching, and cost optimization."
+    ],
+    [
+      "The candidate has worked with Microsoft Azure, specifically Azure OpenAI, Azure ML, and Azure AI Search."
+    ],
+    [
+      "The candidate has experience with Azure Machine Learning, MLflow for experiment tracking, and CI/CD pipelines with GitHub Actions."
+    ],
+    [
+      "The person is proficient in Python, with experience in async programming, FastAPI, and modern AI/ML frameworks."
+    ]
+  ]
+}

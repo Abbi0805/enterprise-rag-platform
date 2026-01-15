@@ -1,0 +1,43 @@
+{
+  "version": "1.0.0",
+  "created_at": "2026-01-15T14:57:28.495073",
+  "num_examples": 4,
+  "examples": [
+    {
+      "id": 0,
+      "question": "What experience does this person have with RAG systems?",
+      "expected_answer": "The person has extensive experience building enterprise RAG platforms with hybrid retrieval, semantic caching, and cost optimization.",
+      "expected_sources": [],
+      "category": "technical_experience",
+      "metadata": {},
+      "created_at": "2026-01-15T14:57:28.495073"
+    },
+    {
+      "id": 1,
+      "question": "Which cloud platforms has this candidate worked with?",
+      "expected_answer": "The candidate has worked with Microsoft Azure, specifically Azure OpenAI, Azure ML, and Azure AI Search.",
+      "expected_sources": [],
+      "category": "cloud_skills",
+      "metadata": {},
+      "created_at": "2026-01-15T14:57:28.495073"
+    },
+    {
+      "id": 2,
+      "question": "What MLOps tools does this person know?",
+      "expected_answer": "The candidate has experience with Azure Machine Learning, MLflow for experiment tracking, and CI/CD pipelines with GitHub Actions.",
+      "expected_sources": [],
+      "category": "mlops",
+      "metadata": {},
+      "created_at": "2026-01-15T14:57:28.495073"
+    },
+    {
+      "id": 3,
+      "question": "What programming languages is this person proficient in?",
+      "expected_answer": "The person is proficient in Python, with experience in async programming, FastAPI, and modern AI/ML frameworks.",
+      "expected_sources": [],
+      "category": "programming",
+      "metadata": {},
+      "created_at": "2026-01-15T14:57:28.495073"
+    }
+  ]
+}

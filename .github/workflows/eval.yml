@@ -1,0 +1,54 @@
+name: RAG Evaluation Pipeline
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:  # Manual trigger
+  schedule:
+    - cron: '0 2 * * 1'  # Weekly on Monday 2 AM UTC
+
+jobs:
+  evaluate:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+    
+    - name: Install dependencies
+      run: |
+        pip install -r requirements.txt
+    
+    - name: Azure Login
+      uses: azure/login@v1
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
+    
+    - name: Create Golden Dataset
+      run: |
+        python mlops/datasets/manage_golden_dataset.py
+    
+    - name: Submit Evaluation Pipeline
+      env:
+        AZURE_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+        AZURE_RESOURCE_GROUP: ${{ secrets.AZURE_RESOURCE_GROUP }}
+        AZURE_ML_WORKSPACE: ${{ secrets.AZURE_ML_WORKSPACE }}
+        AZURE_OPENAI_API_KEY: ${{ secrets.AZURE_OPENAI_API_KEY }}
+        AZURE_OPENAI_ENDPOINT_EU: ${{ secrets.AZURE_OPENAI_ENDPOINT_EU }}
+        AZURE_OPENAI_EMBEDDINGS_API_KEY: ${{ secrets.AZURE_OPENAI_EMBEDDINGS_API_KEY }}
+        AZURE_OPENAI_EMBEDDINGS_ENDPOINT: ${{ secrets.AZURE_OPENAI_EMBEDDINGS_ENDPOINT }}
+      run: |
+        python mlops/pipelines/evaluation_pipeline.py
+    
+    - name: Upload Evaluation Report
+      if: always()
+      uses: actions/upload-artifact@v3
+      with:
+        name: evaluation-report
+        path: outputs/evaluation_*.json

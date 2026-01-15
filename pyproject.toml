@@ -1,0 +1,33 @@
+[project]
+name = "enterprise-rag-platform"
+version = "0.1.0"
+description = "Enterprise-grade Retrieval-Augmented Generation (RAG) platform"
+authors = [
+    {name = "Jacob Abb", email = "jacob.abb@web.de"},
+]
+requires-python = ">=3.10"
+readme = "README.md"
+
+[tool.ruff]
+line-length = 88
+target-version = "py310"
+
+[tool.ruff.lint]
+select = ["E", "F", "B", "I"]
+ignore = []
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+skip-magic-trailing-comma = false
+line-ending = "auto"
+
+[tool.pytest.ini_options]
+minversion = "6.0"
+addopts = "-ra -q"
+testpaths = [
+    "tests",
+]
+pythonpath = [
+    "src"
+]
