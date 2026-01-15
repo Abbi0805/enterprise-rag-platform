@@ -23,60 +23,70 @@ This platform demonstrates **enterprise-grade AI engineering practices** for bui
 ## 🏗️ Architecture
 
 ```mermaid
-graph TB
-    subgraph Client Layer
-        A[OpenWebUI / API Clients]
-    end
+graph LR
+    %% Styling
+    classDef client fill:#e1f5ff,stroke:#01579b,stroke-width:2px
+    classDef api fill:#fff3e0,stroke:#e65100,stroke-width:2px
+    classDef orchestration fill:#f3e5f5,stroke:#4a148c,stroke-width:2px
+    classDef retrieval fill:#e8f5e9,stroke:#1b5e20,stroke-width:2px
+    classDef data fill:#fce4ec,stroke:#880e4f,stroke-width:2px
+    classDef ingestion fill:#fff9c4,stroke:#f57f17,stroke-width:2px
     
-    subgraph API Layer
-        B[FastAPI Server]
-        C[OpenAI Compatible Endpoint]
-        D[Authentication Middleware]
-    end
+    %% Client Layer
+    A[🌐 OpenWebUI<br/>API Clients]:::client
     
-    subgraph Orchestration Layer
-        E[RAG Orchestrator]
-        F[Semantic Cache]
-        G[Cost Tracker]
-        H[Model Router]
-    end
+    %% API Layer
+    B[⚡ FastAPI Server]:::api
+    C[🔌 OpenAI Endpoint<br/>/v1/chat/completions]:::api
+    D[🔐 Auth Middleware<br/>Bearer Tokens]:::api
     
-    subgraph Retrieval Layer
-        I[Hybrid Retriever]
-        J[Vector Search - Qdrant]
-        K[Cross-Encoder Reranker]
-        L[Permission Filter]
-    end
+    %% Orchestration Layer
+    E[🎯 RAG Orchestrator<br/>Query Handler]:::orchestration
+    F[💾 Semantic Cache<br/>Cosine Similarity]:::orchestration
+    G[💰 Cost Tracker<br/>Token Pricing]:::orchestration
+    H[🔀 Model Router<br/>GPT-4o / Mini]:::orchestration
     
-    subgraph Data Layer
-        M[Qdrant Vector DB]
-        N[Azure OpenAI - Embeddings]
-        O[Azure OpenAI - Chat]
-    end
+    %% Retrieval Layer
+    I[🔍 Hybrid Retriever<br/>Vector + Keyword]:::retrieval
+    J[📊 Vector Search<br/>Similarity Search]:::retrieval
+    K[⭐ Reranker<br/>Cross-Encoder]:::retrieval
+    L[🛡️ Permission Filter<br/>RBAC]:::retrieval
     
-    subgraph Ingestion Pipeline
-        P[Document Loaders]
-        Q[Chunking Strategy]
-        R[Embedding Generator]
-    end
+    %% Data Layer
+    M[(🗄️ Qdrant<br/>Vector DB)]:::data
+    N[🤖 Azure OpenAI<br/>Embeddings API]:::data
+    O[💬 Azure OpenAI<br/>Chat API]:::data
     
-    A -->|HTTP Requests| B
-    B --> C
-    B --> D
-    C --> E
-    E --> F
-    E --> G
-    E --> H
-    E --> I
-    I --> J
-    J --> M
-    I --> K
-    I --> L
-    E --> O
-    R --> M
-    P --> Q
-    Q --> R
-    N -.->|Embeddings| R
+    %% Ingestion Pipeline
+    P[📄 Document Loaders<br/>PDF/MD/GitHub]:::ingestion
+    Q[✂️ Chunker<br/>Token-based]:::ingestion
+    R[🔢 Embedding Gen<br/>text-embedding-3]:::ingestion
+    
+    %% Query Flow
+    A -->|"1. HTTP Request"| B
+    B -->|"2. Route"| C
+    B -->|"2. Authenticate"| D
+    D -->|"3. Validated User"| C
+    C -->|"4. Query"| E
+    E -->|"5. Check Cache"| F
+    E -->|"6. Track Cost"| G
+    E -->|"7. Select Model"| H
+    E -->|"8. Retrieve Context"| I
+    I -->|"9. Vector Search"| J
+    J -->|"10. Query DB"| M
+    I -->|"11. Rerank"| K
+    I -->|"12. Filter Access"| L
+    L -->|"13. Filtered Results"| E
+    E -->|"14. Generate Answer"| O
+    O -->|"15. Response"| C
+    C -->|"16. JSON"| A
+    
+    %% Ingestion Flow
+    P -.->|"Load Documents"| Q
+    Q -.->|"Create Chunks"| R
+    R -.->|"Generate Vectors"| N
+    N -.->|"Embeddings"| R
+    R -.->|"Upsert"| M
 ```
 
 ### Component Breakdown
@@ -533,16 +543,16 @@ This project is licensed under the **MIT License** - see [LICENSE](LICENSE) for 
 **Jacob Abb**  
 AI Consultant & Engineer | RAG Systems Specialist
 
-- 🌐 LinkedIn: [linkedin.com/in/jacobabb](https://linkedin.com/in/jacobabb)
-- 📧 Email: jacob.abb@example.com
-- 🐙 GitHub: [@jacobabb](https://github.com/jacobabb)
+- 🌐 LinkedIn: [linkedin.com/in/jacobabb](https://www.linkedin.com/in/jacob-abb-a83a55293/)
+- 📧 Email: jacob.abb@web.de
+- 🐙 GitHub: [@Abbi0805](https://github.com/Abbi0805)
 
 ---
 
 ## 🎓 Learning Resources
 
 **Relevant to This Project**:
-- [RAG Best Practices (OpenAI Cookbook)](https://cookbook.openai.com/examples/rag)
+- [RAG Best Practices (Mastering LLM)](https://masteringllm.medium.com/best-practices-for-rag-pipeline-8c12a8096453)
 - [Qdrant Documentation](https://qdrant.tech/documentation/)
 - [RAGAS Evaluation Framework](https://docs.ragas.io/)
 - [Azure OpenAI Service](https://learn.microsoft.com/en-us/azure/ai-services/openai/)
